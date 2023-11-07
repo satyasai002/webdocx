@@ -1,4 +1,3 @@
-
 import {
   Box,
   Flex,
@@ -47,48 +46,48 @@ const avatars = [
 
 export default function JoinOurTeam() {
   const router = useRouter();
-  const [email,setEmail] = useState('');
-  const [password, setPassword] = useState('');
-   const Login = async (e) => {
-     e.preventDefault();
-     
-     if (email == '' || password == '') {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const Login = async (e) => {
+    e.preventDefault();
+
+    if (email == "" || password == "") {
       console.log("hello");
-       toast.error("Email and Password can't be empty", {
-         position: "top-center",
-         autoClose: 5000,
-         hideProgressBar: false,
-         closeOnClick: true,
-         pauseOnHover: true,
-         draggable: true,
-         progress: undefined,
-         theme: "light",
-       });
-       return;
-     }
-     const response = await fetch("https://webdocx.onrender.com/user/login", {
-       method: "POST",
-       headers: {
-         "Content-Type": "application/json",
-       },
-       body: JSON.stringify({ email, password }),
-     });
-     if (response.status === 200) {
-       const data = await response.json();
-     console.log(data);
-       toast.success("Welcome user " + data.userData[0].name, {
-         position: "top-center",
-         autoClose: 5000,
-         hideProgressBar: false,
-         closeOnClick: true,
-         pauseOnHover: true,
-         draggable: true,
-         progress: undefined,
-         theme: "light",
-       });
-       localStorage.setItem("token", data.token);
-       router.push("/patient/dashboard");
-     } else {
+      toast.error("Email and Password can't be empty", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
+    const response = await fetch("https://webdocx.onrender.com/doctor/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
+    if (response.status === 200) {
+      const data = await response.json();
+      console.log(data);
+      toast.success("Welcome user " + data.doctorData[0].name, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      localStorage.setItem("docToken", data.token);
+      router.push("/doctor/appointment");
+    } else {
       toast.error("Email and password doesn't match", {
         position: "top-center",
         autoClose: 5000,
@@ -99,9 +98,9 @@ export default function JoinOurTeam() {
         progress: undefined,
         theme: "light",
       });
-       console.error("Login failed");
-     }
-   };
+      console.error("Login failed");
+    }
+  };
   return (
     <Box position={"relative"}>
       <Container
@@ -170,7 +169,7 @@ export default function JoinOurTeam() {
               lineHeight={1.1}
               fontSize={{ base: "2xl", sm: "3xl", md: "4xl" }}
             >
-              Welcome Back
+              Welcome Back Doctor
               <Text
                 as={"span"}
                 bgGradient="linear(to-r, red.400,pink.400)"
@@ -179,11 +178,6 @@ export default function JoinOurTeam() {
                 !
               </Text>
             </Heading>
-            <Text color={"gray.500"} fontSize={{ base: "sm", sm: "md" }}>
-              As pioneers in the healthcare segment, we understand the
-              importance of trust. And that is why, over the years, we worked on
-              building that trust..
-            </Text>
           </Stack>
           <Box as={"form"}>
             <Stack spacing={4}>
@@ -245,7 +239,7 @@ export default function JoinOurTeam() {
                   fontFamily="'Poppins'"
                   color="red.400"
                   onClick={() => {
-                    router.push("/patient/signup");
+                    router.push("/doctor/signup");
                   }}
                 >
                   Sign Up

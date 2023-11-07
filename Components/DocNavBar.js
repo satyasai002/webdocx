@@ -28,9 +28,6 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/router";
 
 const links = [
-  { name: "Find Doctor", href: "./finddoctor", icon: <BiHomeHeart /> },
-  { name: "Lab Test", href: "./labtests", icon: <BiTrip /> },
-  { name: "Prescription", href: "./prescription", icon: <GrGallery /> },
   { name: "Contact Us", href: "./contactus", icon: <GrContact /> },
 ];
 
@@ -48,14 +45,12 @@ const LinkItem = ({ href, children }) => (
   </Link>
 );
 
-
-
-const NavBar = () => {
-  const router = useRouter()
-  const Logout = ()=>{
-    localStorage.removeItem("token");
-    router.push("/login")
-  }
+const DocNavBar = () => {
+    const router = useRouter();
+    const Logout = () => {
+      localStorage.removeItem("docToken");
+      router.push("/doctor/login");
+    };
   return (
     <Flex flexDirection="column">
       <Box
@@ -102,6 +97,7 @@ const NavBar = () => {
               </LinkItem>
             ))}
           </HStack>
+
           <Tooltip label="Logout" cursor="pointer">
             <Avatar
               icon={<FaRegUserCircle />}
@@ -123,4 +119,4 @@ const NavBar = () => {
   );
 };
 
-export default NavBar;
+export default DocNavBar;

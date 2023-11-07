@@ -55,7 +55,8 @@ const Test = [
     name: "CBC",
   },
 ];
-const Labtest = () => {
+const Labtest = ({data}) => {
+  console.log(data)
   return (
     <Container maxW={"7xl"}>
       <VStack
@@ -64,14 +65,14 @@ const Labtest = () => {
         textAlign="left"
       >
         <Box>
-          <Flex direction="column" gap="1">
+          <Flex direction="column" gap="1" >
             <Text fontFamily={"Work Sans"} fontSize={25}>
               Doctor Created Health Checks (6)
             </Text>
             <Container maxW={"9xl"} mt={10}>
               <SimpleGrid columns={{ base: 1, md: 2, lg: 7 }} spacing={10}>
-                {Test.slice(0, 6).map(
-                  (test, index) => {
+                {data?.map((each, index) => {
+                   return each.tests.map((test,index) =>{
                     return (
                       <Flex
                         direction="row"
@@ -86,7 +87,7 @@ const Labtest = () => {
                         minW={"100px"}
                       >
                         <Image
-                          src={test.img}
+                          src={Test[Math.floor(Math.random() * 13)].img}
                           height={"40px"}
                           width={"40px"}
                         ></Image>
@@ -96,7 +97,7 @@ const Labtest = () => {
                       </Flex>
                     );
                   }
-                )}
+                )})}
               </SimpleGrid>
             </Container>
           </Flex>

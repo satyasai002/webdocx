@@ -17,12 +17,70 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useState } from "react";
 // import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 
 export default function SignupCard() {
   const [showPassword, setShowPassword] = useState(false);
+  const [name, setName] = useState('');
+  const [mobile, setMobile] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const router  = useRouter();
+  const Signup = async (e) => {
+    e.preventDefault();
+
+    if (email == "" || password == "" || mobile=='' || name == '') {
+      toast.error("Input fields can't be empty", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
+    const response = await fetch("https://webdocx.onrender.com/user/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password, name, mobile }),
+    });
+    if (response.status === 201) {
+      const data = await response.json();
+      console.log(data);
+      toast.success("Account created " + name, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      localStorage.setItem("token", data.token);
+      router.push("/login");
+    } else {
+      toast.error("Email already in use !!", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      console.error("Login failed");
+    }
+  };
   return (
     <>
       <Flex
@@ -51,25 +109,45 @@ export default function SignupCard() {
               <HStack>
                 <Box>
                   <FormControl id="firstName" isRequired>
-                    <FormLabel>First Name</FormLabel>
-                    <Input type="text" />
+                    <FormLabel>Name</FormLabel>
+                    <Input
+                      type="text"
+                      onChange={(e) => {
+                        setName(e.target.value);
+                      }}
+                    />
                   </FormControl>
                 </Box>
                 <Box>
                   <FormControl id="lastName">
-                    <FormLabel>Last Name</FormLabel>
-                    <Input type="text" />
+                    <FormLabel>Mobile</FormLabel>
+                    <Input
+                      type="text"
+                      onChange={(e) => {
+                        setMobile(e.target.value);
+                      }}
+                    />
                   </FormControl>
                 </Box>
               </HStack>
               <FormControl id="email" isRequired>
                 <FormLabel>Email address</FormLabel>
-                <Input type="email" />
+                <Input
+                  type="email"
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                  }}
+                />
               </FormControl>
               <FormControl id="password" isRequired>
                 <FormLabel>Password</FormLabel>
                 <InputGroup>
-                  <Input type={showPassword ? "text" : "password"} />
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                    }}
+                  />
                   <InputRightElement h={"full"}>
                     <Button
                       variant={"ghost"}
@@ -93,6 +171,7 @@ export default function SignupCard() {
                     bgGradient: "linear(to-r, red.400,pink.400)",
                     boxShadow: "xl",
                   }}
+                  onClick={Signup}
                 >
                   Sign up
                 </Button>
@@ -134,6 +213,18 @@ export default function SignupCard() {
         <circle cx="70.5" cy="458.5" r="101.5" fill="#48BB78" />
         <circle cx="426.5" cy="-0.5" r="101.5" fill="#4299E1" />
       </Icon>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </>
   );
 }

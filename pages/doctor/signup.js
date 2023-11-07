@@ -17,12 +17,81 @@ import {
   useBreakpointValue,
   Progress,
 } from "@chakra-ui/react";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useState } from "react";
+import { useRouter } from "next/router";
 // import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-function Form1({HandleChange}){
-   
+export default function SignupCard(){
+   const [name,setName] = useState();
+   const [speciality,setSpeciality] = useState();
+   const [email,setEmail] = useState();
+   const [password,setPassword] = useState();
+   const [mobile,setMobile] = useState();
+   const router = useRouter();
+   const Signup = async (e) => {
+     e.preventDefault();
+
+     if (email == "" || password == "" || mobile == "" || name == "" || speciality == "") {
+       toast.error("Input fields can't be empty", {
+         position: "top-center",
+         autoClose: 5000,
+         hideProgressBar: false,
+         closeOnClick: true,
+         pauseOnHover: true,
+         draggable: true,
+         progress: undefined,
+         theme: "light",
+       });
+       return;
+     }
+     const response = await fetch(
+       "https://webdocx.onrender.com/doctor/signup",
+       {
+         method: "POST",
+         headers: {
+           "Content-Type": "application/json",
+         },
+         body: JSON.stringify({ email, password, name, mobile, speciality }),
+       }
+     );
+     if (response.status === 201) {
+       const data = await response.json();
+       console.log(data);
+       toast.success("Account created " + name, {
+         position: "top-center",
+         autoClose: 5000,
+         hideProgressBar: false,
+         closeOnClick: true,
+         pauseOnHover: true,
+         draggable: true,
+         progress: undefined,
+         theme: "light",
+       });
+       localStorage.setItem("token", data.token);
+       router.push("/login");
+     } else {
+       toast.error("Email already in use !!", {
+         position: "top-center",
+         autoClose: 5000,
+         hideProgressBar: false,
+         closeOnClick: true,
+         pauseOnHover: true,
+         draggable: true,
+         progress: undefined,
+         theme: "light",
+       });
+       console.error("Login failed");
+     }
+   };
     return (
-      <>
+      <Flex
+        minH={"100vh"}
+        align={"center"}
+        justify={"center"}
+        bg={useColorModeValue("gray.50", "gray.800")}
+      >
         <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
           <Stack align={"center"}>
             <Heading fontSize={"4xl"} textAlign={"center"}>
@@ -42,24 +111,44 @@ function Form1({HandleChange}){
               <HStack>
                 <Box>
                   <FormControl id="firstName" isRequired>
-                    <FormLabel>First Name</FormLabel>
-                    <Input type="text" />
+                    <FormLabel>Name</FormLabel>
+                    <Input
+                      type="text"
+                      onChange={(e) => {
+                        setName(e.target.value);
+                      }}
+                    />
                   </FormControl>
                 </Box>
                 <Box>
                   <FormControl id="lastName">
-                    <FormLabel>Last Name</FormLabel>
-                    <Input type="text" />
+                    <FormLabel>Mobile</FormLabel>
+                    <Input
+                      type="number"
+                      onChange={(e) => {
+                        setMobile(e.target.value);
+                      }}
+                    />
                   </FormControl>
                 </Box>
               </HStack>
-                <FormControl id="lastName" isRequired>
-                  <FormLabel>Date of birth</FormLabel>
-                  <Input type="date" />
-                </FormControl>
+              <FormControl id="lastName" isRequired>
+                <FormLabel>Speciality</FormLabel>
+                <Input
+                  type="text"
+                  onChange={(e) => {
+                    setSpeciality(e.target.value);
+                  }}
+                />
+              </FormControl>
               <FormControl id="email" isRequired>
                 <FormLabel>Email address</FormLabel>
-                <Input type="email" />
+                <Input
+                  type="email"
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                  }}
+                />
               </FormControl>
               <FormControl id="password" isRequired>
                 <FormLabel>Password</FormLabel>
@@ -67,6 +156,9 @@ function Form1({HandleChange}){
                   <Input
                     //   type={showPassword ? "text" : "password"}
                     type="password"
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                    }}
                   />
                   <InputRightElement h={"full"}>
                     <Button
@@ -86,12 +178,9 @@ function Form1({HandleChange}){
                 alignItems={"center"}
               >
                 <Text>
-                  Already a user? <Link color={"blue.400"}>Login</Link>
+                  Already a user? <Link color={"blue.400"} onClick={()=>{router.push("/doctor/login")}}>Login</Link>
                 </Text>
                 <Button
-                  onClick={() => {
-                    HandleChange(2);
-                  }}
                   fontFamily={"heading"}
                   bgGradient="linear(to-r, red.400,pink.400)"
                   color={"white"}
@@ -99,206 +188,26 @@ function Form1({HandleChange}){
                     bgGradient: "linear(to-r, red.400,pink.400)",
                     boxShadow: "xl",
                   }}
+                  onClick={Signup}
                 >
-                  {" "}
-                  Next
+                  SignUp
                 </Button>
               </Flex>
             </Stack>
           </Box>
         </Stack>
-      </>
-    );
-}
-function Form2({HandleChange}) {
-  return (
-    <>
-      <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
-        <Box
-          rounded={"lg"}
-          bg={useColorModeValue("white", "gray.700")}
-          boxShadow={"lg"}
-          p={8}
-        >
-          <Stack spacing={4}>
-            <FormControl id="firstName" isRequired>
-              <FormLabel>Address</FormLabel>
-              <Input type="text" />
-            </FormControl>
-            <Box>
-              <FormControl id="lastName" isRequired>
-                <FormLabel>Mobile</FormLabel>
-                <Input type="text" />
-              </FormControl>
-            </Box>
-            <HStack>
-              <Box>
-                <FormControl id="email" isRequired>
-                  <FormLabel>City</FormLabel>
-                  <Input />
-                </FormControl>
-              </Box>
-              <Box>
-                <FormControl id="email" isRequired>
-                  <FormLabel>State</FormLabel>
-                  <Input />
-                </FormControl>
-              </Box>
-            </HStack>
-            <HStack>
-              <Box>
-                <FormControl isRequired>
-                  <FormLabel>Pin code</FormLabel>
-                  <Input />
-                </FormControl>
-              </Box>
-              <Box>
-                <FormControl isRequired>
-                  <FormLabel>Country</FormLabel>
-                  <Input />
-                </FormControl>
-              </Box>
-            </HStack>
-
-            <HStack pt={2} justifyContent={"space-between"}>
-              <Button
-                onClick={() => {
-                  HandleChange(1);
-                }}
-                fontFamily={"heading"}
-                mt={8}
-                bgGradient="linear(to-r, red.400,pink.400)"
-                color={"white"}
-                _hover={{
-                  bgGradient: "linear(to-r, red.400,pink.400)",
-                  boxShadow: "xl",
-                }}
-              >
-                {" "}
-                Back
-              </Button>
-              <Button
-                onClick={() => {
-                  HandleChange(3);
-                }}
-                fontFamily={"heading"}
-                mt={8}
-                bgGradient="linear(to-r, red.400,pink.400)"
-                color={"white"}
-                _hover={{
-                  bgGradient: "linear(to-r, red.400,pink.400)",
-                  boxShadow: "xl",
-                }}
-              >
-                {" "}
-                Next
-              </Button>
-            </HStack>
-          </Stack>
-        </Box>
-      </Stack>
-    </>
-  );
-}
-function Form3({HandleChange}) {
-  return (
-    <>
-      <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
-        <Box
-          rounded={"lg"}
-          bg={useColorModeValue("white", "gray.700")}
-          boxShadow={"lg"}
-          p={8}
-        >
-          <Stack spacing={4}>
-            <HStack>
-              <Box>
-                <FormControl id="firstName" isRequired>
-                  <FormLabel>Qualification</FormLabel>
-                  <Input type="text" />
-                </FormControl>
-              </Box>
-              <Box>
-                <FormControl id="lastName" isRequired>
-                  <FormLabel>Speciality</FormLabel>
-                  <Input type="text" />
-                </FormControl>
-              </Box>
-            </HStack>
-                <FormControl id="firstName" isRequired>
-                  <FormLabel>Experience</FormLabel>
-                  <InputGroup>
-                    <Input type="number" />
-                    <InputRightElement>
-                      <Text bg="gray.300" p="2" borderRadius={"0 5px 5px 0"}>
-                        Yrs
-                      </Text>
-                    </InputRightElement>
-                  </InputGroup>
-                </FormControl>
-            <FormControl id="lastName" isRequired>
-              <FormLabel>Registration number</FormLabel>
-              <Input type="text" />
-            </FormControl>
-            <FormControl id="lastName" isRequired>
-              <FormLabel>License</FormLabel>
-              <Input type="file" />
-            </FormControl>
-            <HStack pt={2} justifyContent={"space-between"}>
-              <Button
-                onClick={() => {
-                  HandleChange(2);
-                }}
-                fontFamily={"heading"}
-                mt={8}
-                bgGradient="linear(to-r, red.400,pink.400)"
-                color={"white"}
-                _hover={{
-                  bgGradient: "linear(to-r, red.400,pink.400)",
-                  boxShadow: "xl",
-                }}
-              >
-                {" "}
-                Back
-              </Button>
-              <Button
-                fontFamily={"heading"}
-                mt={8}
-                bgGradient="linear(to-r, red.400,pink.400)"
-                color={"white"}
-                _hover={{
-                  bgGradient: "linear(to-r, red.400,pink.400)",
-                  boxShadow: "xl",
-                }}
-              >
-                Signup
-              </Button>
-            </HStack>
-          </Stack>
-        </Box>
-      </Stack>
-    </>
-  );
-}
-export default function SignupCard() {
-  const [stage,setStage] = useState(1);
- 
-  return (
-    <>
-      <Flex
-        minH={"100vh"}
-        align={"center"}
-        justify={"center"}
-        bg={useColorModeValue("gray.50", "gray.800")}
-      >
-        {stage === 1 ? (
-          <Form1 HandleChange={setStage} />
-        ) : stage === 2 ? (
-          <Form2 HandleChange={setStage} />
-        ) : (
-          <Form3 HandleChange={setStage} />
-        )}
+        <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </Flex>
-    </>
-  );
+    );
 }
